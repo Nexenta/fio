@@ -1,0 +1,21 @@
+; Read and write files with ccow aio 
+[global]
+ioengine=ccowvolaio
+direct=1
+rw=randrw
+rwmixread=75
+;refill_buffers
+;norandommap
+;randrepeat=0
+verify=crc32c-intel
+bs=4K
+iodepth=4
+numjobs=4
+runtime=3600
+group_reporting
+size=16G
+thread=1
+bucket=cltest/test/test-bucket
+
+;name=4krandrw_r70w30
+[file1]

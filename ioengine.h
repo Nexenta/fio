@@ -15,6 +15,9 @@
 #ifdef CONFIG_GUASI
 #include <guasi.h>
 #endif
+#ifdef CONFIG_CCOWVOLAIO
+#include "libccowvol.h"
+#endif
 
 #define FIO_IOOPS_VERSION	23
 
@@ -101,6 +104,9 @@ struct io_u {
 	int (*end_io)(struct thread_data *, struct io_u **);
 
 	union {
+#ifdef CONFIG_CCOWVOLAIO
+		struct ccow_aio vol_aio_cb;
+#endif
 #ifdef CONFIG_LIBAIO
 		struct iocb iocb;
 #endif

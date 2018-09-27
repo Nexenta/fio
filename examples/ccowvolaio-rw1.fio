@@ -1,0 +1,16 @@
+; Read 4 files with aio at different depths
+[global]
+ioengine=ccowvolaio
+buffered=0
+direct=1
+bs=4K
+size=10G
+rw=randrw
+chunk_size=4096
+bucket=cltest/test/test-bucket4k
+group_reporting=1
+thread=1
+
+[file1]
+iodepth=128
+numjobs=16

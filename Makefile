@@ -55,6 +55,35 @@ ifdef CONFIG_LIBHDFS
   SOURCE += engines/libhdfs.c
 endif
 
+CONFIG_CCOWVOLAIO=y
+ifdef CONFIG_CCOWVOLAIO
+  CFLAGS +=-I$(NEDGE_HOME)/include/ccow -D CONFIG_CCOWVOLAIO
+  SOURCE += engines/ccowvolaio.c
+  LDFLAGS += -L$(NEDGE_HOME)/lib -ljemalloc
+  LIBS += -lccowvol	-lccow 
+endif
+
+CONFIG_CCOWOBJ=y
+ifdef CONFIG_CCOWOBJ
+  CFLAGS +=-I$(NEDGE_HOME)/include/ccow -D CONFIG_CCOWOBJ
+  SOURCE += engines/ccowobj.c
+  LDFLAGS += -L$(NEDGE_HOME)/lib -ljemalloc
+  LIBS += -lccow
+endif
+
+CONFIG_REPTRANS=y
+ifdef CONFIG_REPTRANS
+  LDFLAGS += -L$(NEDGE_HOME)/lib -ljemalloc
+  SOURCE += engines/reptrans.c
+  LIBS += -lccowutil -lccowd -luv -lrtrd -llmdb
+  CFLAGS +=-I$(NEDGE_HOME)/include/ccow -I$(NEDGE_HOME)/include \
+	-I../../../src/ccow/src/include \
+	-I../../../src/ccow/src/libreptrans \
+	-I../../../src/ccow/src/libreplicast \
+	-I../../../src/ccow/src/libflexhash \
+	-I../../../src/ccow/src/libtrlog
+endif
+
 ifdef CONFIG_64BIT_LLP64
   CFLAGS += -DBITS_PER_LONG=32
 endif
@@ -292,13 +321,13 @@ else
 	INSTALL = install
 endif
 prefix = $(INSTALL_PREFIX)
-bindir = $(prefix)/bin
+sbindir = $(prefix)/sbin
 
 ifeq ($(CONFIG_TARGET_OS), Darwin)
 mandir = /usr/share/man
 sharedir = /usr/share/fio
 else
-mandir = $(prefix)/man
+mandir = $(prefix)/share/man
 sharedir = $(prefix)/share/fio
 endif
 
@@ -451,8 +480,8 @@ doc: tools/plot/fio2gnuplot.1
 test:
 
 install: $(PROGS) $(SCRIPTS) tools/plot/fio2gnuplot.1 FORCE
-	$(INSTALL) -m 755 -d $(DESTDIR)$(bindir)
-	$(INSTALL) $(PROGS) $(SCRIPTS) $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 -d $(DESTDIR)$(sbindir)
+	$(INSTALL) $(PROGS) $(SCRIPTS) $(DESTDIR)$(sbindir)
 	$(INSTALL) -m 755 -d $(DESTDIR)$(mandir)/man1
 	$(INSTALL) -m 644 $(SRCDIR)/fio.1 $(DESTDIR)$(mandir)/man1
 	$(INSTALL) -m 644 $(SRCDIR)/tools/fio_generate_plots.1 $(DESTDIR)$(mandir)/man1
